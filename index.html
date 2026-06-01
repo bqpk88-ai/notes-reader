@@ -528,7 +528,7 @@ async function askQuestion() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': cfg.apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-haiku-4-5',
         max_tokens: 1024,
         system: `You are a personal assistant helping the user find information in their own private notes and documents. 
 Answer based ONLY on the provided source passages. 
