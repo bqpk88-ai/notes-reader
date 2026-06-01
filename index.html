@@ -9,346 +9,97 @@
 <title>Notes Reader</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
-
   :root {
-    --bg: #F7F6F2;
-    --surface: #FFFFFF;
-    --surface2: #F0EEE9;
-    --border: #E2DFD8;
-    --border2: #D0CCC3;
-    --text: #1A1917;
-    --text2: #6B6860;
-    --text3: #9E9B93;
-    --accent: #2A5C45;
-    --accent-light: #EAF2ED;
-    --accent-text: #1C3D2E;
-    --danger: #C0392B;
-    --danger-light: #FDECEA;
-    --radius: 12px;
-    --radius-sm: 8px;
+    --bg: #F7F6F2; --surface: #FFFFFF; --surface2: #F0EEE9;
+    --border: #E2DFD8; --border2: #D0CCC3;
+    --text: #1A1917; --text2: #6B6860; --text3: #9E9B93;
+    --accent: #2A5C45; --accent-light: #EAF2ED; --accent-text: #1C3D2E;
+    --danger: #C0392B; --danger-light: #FDECEA;
+    --radius: 12px; --radius-sm: 8px;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 15px;
-  }
-
-  /* ── App shell ── */
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; }
   .app { max-width: 480px; margin: 0 auto; padding: 0 0 80px; }
-
-  /* ── Header ── */
-  .header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 20px 14px;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-  }
+  .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 20px 14px; position: sticky; top: 0; z-index: 50; }
   .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
   .header h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
   .header h1 span { color: var(--accent); }
-  .sync-btn {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 5px 12px;
-    border-radius: 999px;
-    border: 1px solid var(--border2);
-    background: var(--surface);
-    color: var(--text2);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: all 0.15s;
-  }
+  .sync-btn { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--border2); background: var(--surface); color: var(--text2); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.15s; }
   .sync-btn:hover { background: var(--surface2); }
-  .sync-btn svg { width: 13px; height: 13px; }
   .doc-count { font-size: 12px; color: var(--text3); }
-
-  /* ── Search bar ── */
   .search-wrap { padding: 14px 20px 0; }
   .search-inner { position: relative; }
-  .search-inner svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text3); pointer-events: none; }
-  .search-inner input {
-    width: 100%;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    padding: 11px 44px 11px 38px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    color: var(--text);
-    outline: none;
-    transition: border 0.15s, background 0.15s;
-  }
+  .search-inner svg.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text3); pointer-events: none; }
+  .search-inner input { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 11px 70px 11px 38px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface2); color: var(--text); outline: none; transition: border 0.15s, background 0.15s; }
   .search-inner input:focus { border-color: var(--accent); background: var(--surface); }
   .search-inner input::placeholder { color: var(--text3); }
-  .ask-btn {
-    position: absolute;
-    right: 6px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: var(--radius-sm);
-    border: none;
-    background: var(--accent);
-    color: #fff;
-    cursor: pointer;
-    transition: opacity 0.15s;
-  }
+  .ask-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: var(--radius-sm); border: none; background: var(--accent); color: #fff; cursor: pointer; transition: opacity 0.15s; white-space: nowrap; }
   .ask-btn:hover { opacity: 0.85; }
   .ask-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  /* ── Answer panel ── */
-  .answer-panel {
-    margin: 12px 20px 0;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    display: none;
-  }
+  .answer-panel { margin: 12px 20px 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: none; }
   .answer-panel.visible { display: block; }
-  .answer-header {
-    background: var(--accent-light);
-    padding: 9px 14px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    border-bottom: 1px solid var(--border);
-  }
+  .answer-header { background: var(--accent-light); padding: 9px 14px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--border); }
   .answer-header svg { width: 14px; height: 14px; color: var(--accent); flex-shrink: 0; }
   .answer-header span { font-size: 11px; font-weight: 600; color: var(--accent-text); letter-spacing: 0.5px; text-transform: uppercase; }
-  .answer-body { padding: 14px; font-size: 14px; line-height: 1.75; color: var(--text); }
+  .answer-body { padding: 14px; font-size: 14px; line-height: 1.75; color: var(--text); white-space: pre-wrap; }
   .answer-sources { padding: 0 14px 12px; display: flex; flex-wrap: wrap; gap: 6px; }
-  .source-tag {
-    font-size: 11px;
-    padding: 3px 9px;
-    border-radius: 999px;
-    background: var(--surface2);
-    color: var(--text2);
-    border: 1px solid var(--border);
-    font-family: 'DM Mono', monospace;
-  }
-
-  /* ── Doc list ── */
-  .section-label {
-    padding: 18px 20px 8px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    color: var(--text3);
-  }
+  .source-tag { font-size: 11px; padding: 3px 9px; border-radius: 999px; background: var(--surface2); color: var(--text2); border: 1px solid var(--border); font-family: 'DM Mono', monospace; }
+  .step-indicator { font-size: 11px; color: var(--accent); padding: 6px 14px; background: var(--accent-light); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
+  .section-label { padding: 18px 20px 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text3); }
   .doc-list { padding: 0 20px; display: flex; flex-direction: column; gap: 8px; }
-  .doc-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 13px 14px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: border-color 0.15s;
-  }
-  .doc-card:hover { border-color: var(--border2); }
-  .doc-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-sm);
-    background: #FEF2F2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
+  .doc-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 13px 14px; display: flex; align-items: center; gap: 12px; }
+  .doc-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); background: #FEF2F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .doc-icon svg { width: 18px; height: 18px; color: #E74C3C; }
   .doc-info { flex: 1; min-width: 0; }
   .doc-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .doc-meta { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: 'DM Mono', monospace; }
-  .doc-check { width: 18px; height: 18px; color: var(--accent); flex-shrink: 0; }
-
-  /* ── Empty / states ── */
-  .state-box {
-    margin: 40px 20px 0;
-    padding: 32px 24px;
-    background: var(--surface);
-    border: 1px dashed var(--border2);
-    border-radius: var(--radius);
-    text-align: center;
-  }
+  .doc-status { font-size: 11px; font-weight: 500; flex-shrink: 0; }
+  .doc-status.ready { color: var(--accent); }
+  .doc-status.loading { color: var(--text3); }
+  .doc-status.error { color: var(--danger); }
+  .state-box { margin: 40px 20px 0; padding: 32px 24px; background: var(--surface); border: 1px dashed var(--border2); border-radius: var(--radius); text-align: center; }
   .state-box svg { width: 40px; height: 40px; color: var(--text3); margin-bottom: 12px; }
   .state-box p { font-size: 14px; color: var(--text2); line-height: 1.6; }
   .state-box small { font-size: 12px; color: var(--text3); display: block; margin-top: 6px; }
-
-  /* ── Sign in screen ── */
-  #signin-screen {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 24px;
-    text-align: center;
-    background: var(--bg);
-  }
-  .logo-mark {
-    width: 64px;
-    height: 64px;
-    background: var(--accent);
-    border-radius: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-  }
+  #signin-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; text-align: center; background: var(--bg); }
+  .logo-mark { width: 64px; height: 64px; background: var(--accent); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
   .logo-mark svg { width: 32px; height: 32px; color: #fff; }
   #signin-screen h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 8px; }
   #signin-screen p { font-size: 14px; color: var(--text2); line-height: 1.6; max-width: 300px; margin: 0 auto 28px; }
-  .signin-btn {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 13px 24px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border2);
-    background: var(--surface);
-    color: var(--text);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0 auto;
-    transition: all 0.15s;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  }
-  .signin-btn:hover { background: var(--surface2); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+  .signin-btn { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; padding: 13px 24px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--surface); color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 10px; margin: 0 auto; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .signin-btn:hover { background: var(--surface2); }
   .signin-btn svg { width: 20px; height: 20px; }
-
-  /* ── Config screen ── */
-  #config-screen {
-    display: none;
-    padding: 32px 24px;
-    max-width: 480px;
-    margin: 0 auto;
-  }
+  #config-screen { display: none; padding: 32px 24px; max-width: 480px; margin: 0 auto; }
   #config-screen h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
   #config-screen p { font-size: 13px; color: var(--text2); margin-bottom: 24px; line-height: 1.6; }
   .field-label { font-size: 12px; font-weight: 600; color: var(--text2); letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 6px; display: block; }
   .field-group { margin-bottom: 16px; }
-  .field-group input {
-    width: 100%;
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    padding: 11px 14px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
-    outline: none;
-    transition: border 0.15s;
-  }
+  .field-group input { width: 100%; font-family: 'DM Mono', monospace; font-size: 13px; padding: 11px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text); outline: none; transition: border 0.15s; }
   .field-group input:focus { border-color: var(--accent); }
   .field-group small { font-size: 11px; color: var(--text3); display: block; margin-top: 5px; line-height: 1.5; }
-  .save-btn {
-    width: 100%;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 13px;
-    border-radius: var(--radius);
-    border: none;
-    background: var(--accent);
-    color: #fff;
-    cursor: pointer;
-    transition: opacity 0.15s;
-    margin-top: 8px;
-  }
+  .save-btn { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; padding: 13px; border-radius: var(--radius); border: none; background: var(--accent); color: #fff; cursor: pointer; transition: opacity 0.15s; margin-top: 8px; }
   .save-btn:hover { opacity: 0.85; }
-
-  /* ── Loading spinner ── */
   @keyframes spin { to { transform: rotate(360deg); } }
   .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: -2px; }
-  .spinner.dark { border-color: rgba(0,0,0,0.1); border-top-color: var(--accent); }
-
-  /* ── Bottom nav ── */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-width: 480px;
-    margin: 0 auto;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    display: flex;
-    padding: 8px 0 env(safe-area-inset-bottom, 8px);
-  }
-  .nav-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    padding: 6px;
-    cursor: pointer;
-    color: var(--text3);
-    font-size: 10px;
-    font-weight: 500;
-    transition: color 0.15s;
-    border: none;
-    background: none;
-    font-family: 'DM Sans', sans-serif;
-  }
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; max-width: 480px; margin: 0 auto; background: var(--surface); border-top: 1px solid var(--border); display: flex; padding: 8px 0 env(safe-area-inset-bottom, 8px); }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px; cursor: pointer; color: var(--text3); font-size: 10px; font-weight: 500; transition: color 0.15s; border: none; background: none; font-family: 'DM Sans', sans-serif; }
   .nav-item svg { width: 22px; height: 22px; }
   .nav-item.active { color: var(--accent); }
-
-  /* ── Folder picker ── */
-  .folder-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-    background: var(--surface2);
-    border-radius: var(--radius-sm);
-    margin-bottom: 12px;
-    border: 1px solid var(--border);
-  }
+  .folder-row { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--surface2); border-radius: var(--radius-sm); margin-bottom: 12px; border: 1px solid var(--border); }
   .folder-row svg { width: 16px; height: 16px; color: var(--text2); flex-shrink: 0; }
   .folder-row span { font-size: 13px; color: var(--text2); font-family: 'DM Mono', monospace; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .folder-row button {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 999px;
-    border: 1px solid var(--border2);
-    background: var(--surface);
-    color: var(--text2);
-    cursor: pointer;
-  }
-
+  .folder-row button { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border2); background: var(--surface); color: var(--text2); cursor: pointer; }
   .error-msg { font-size: 12px; color: var(--danger); background: var(--danger-light); padding: 8px 12px; border-radius: var(--radius-sm); margin-top: 10px; display: none; }
   .error-msg.visible { display: block; }
-
   #main-app { display: none; }
+  .max-docs-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .max-docs-row label { font-size: 13px; color: var(--text2); flex: 1; }
+  .max-docs-row select { font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text); outline: none; }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════
-     SIGN IN SCREEN
-═══════════════════════════════════════════ -->
+<!-- SIGN IN -->
 <div id="signin-screen">
   <div class="logo-mark">
     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -356,86 +107,74 @@
   <h2>Notes Reader</h2>
   <p>Ask questions across all your PDF notes stored in Google Drive. Powered by Claude AI.</p>
   <button class="signin-btn" onclick="startSignIn()">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
     Sign in with Google
   </button>
   <p style="margin-top:20px; font-size:12px; color:var(--text3);">Your notes never leave your device except when querying Claude AI.</p>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     CONFIG SCREEN (first time setup)
-═══════════════════════════════════════════ -->
+<!-- CONFIG -->
 <div id="config-screen">
   <h2>Setup</h2>
-  <p>Enter your credentials to connect your Google Drive and Claude AI.</p>
-
+  <p>Enter your credentials once to get started.</p>
   <div class="field-group">
     <label class="field-label">Google OAuth Client ID</label>
     <input type="text" id="client-id-input" placeholder="123456789-abc.apps.googleusercontent.com" />
-    <small>From Google Cloud Console → Credentials → OAuth 2.0 Client ID</small>
+    <small>From Google Cloud Console → Clients</small>
   </div>
-
   <div class="field-group">
     <label class="field-label">Anthropic API Key</label>
     <input type="password" id="api-key-input" placeholder="sk-ant-..." />
-    <small>From console.anthropic.com → API Keys. Stored only in your browser.</small>
+    <small>From console.anthropic.com → API Keys</small>
   </div>
-
   <button class="save-btn" onclick="saveConfig()">Save & Continue →</button>
   <div class="error-msg" id="config-error"></div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     MAIN APP
-═══════════════════════════════════════════ -->
+<!-- MAIN APP -->
 <div id="main-app">
   <div class="app">
-
-    <!-- Header -->
     <div class="header">
       <div class="header-top">
         <h1>Notes <span>Reader</span></h1>
-        <button class="sync-btn" onclick="loadDocuments()">
-          <svg id="sync-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        <button class="sync-btn" onclick="loadDocumentList()">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
           Refresh
         </button>
       </div>
       <div class="doc-count" id="doc-count">No documents loaded</div>
     </div>
 
-    <!-- Search -->
     <div class="search-wrap">
       <div class="search-inner">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         <input type="text" id="question-input" placeholder="Ask anything across your notes…" onkeydown="if(event.key==='Enter') askQuestion()" />
         <button class="ask-btn" id="ask-btn" onclick="askQuestion()">Ask</button>
       </div>
     </div>
 
-    <!-- Answer panel -->
     <div class="answer-panel" id="answer-panel">
       <div class="answer-header">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
         <span>AI Answer</span>
       </div>
+      <div class="step-indicator" id="step-indicator" style="display:none;">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <span id="step-text"></span>
+      </div>
       <div class="answer-body" id="answer-body"></div>
       <div class="answer-sources" id="answer-sources"></div>
     </div>
 
-    <!-- Doc list -->
     <div class="section-label" id="docs-label" style="display:none;">Your Documents</div>
     <div class="doc-list" id="doc-list"></div>
-
-    <!-- Empty state -->
     <div class="state-box" id="empty-state">
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
-      <p>No documents loaded yet.<br>Select your Google Drive folder below.</p>
+      <p>No documents loaded yet.<br>Select your Google Drive folder in Settings.</p>
       <small>Tap Settings → choose folder → Refresh</small>
     </div>
-
   </div>
 
-  <!-- Bottom nav -->
   <nav class="bottom-nav">
     <button class="nav-item active" onclick="showTab('search')">
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -447,7 +186,6 @@
     </button>
   </nav>
 
-  <!-- Settings panel (hidden by default) -->
   <div id="settings-panel" style="display:none; padding: 20px; padding-bottom: 80px;">
     <div style="max-width:440px; margin: 0 auto;">
       <p style="font-size:13px; font-weight:600; margin-bottom:14px; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px;">Google Drive Folder</p>
@@ -456,14 +194,23 @@
         <span id="folder-name-display">No folder selected</span>
         <button onclick="pickFolder()">Change</button>
       </div>
-      <p style="font-size:12px; color:var(--text3); margin-bottom:24px;">Select the Google Drive folder containing your PDF notes. All PDFs inside will be loaded when you refresh.</p>
+
+      <p style="font-size:13px; font-weight:600; margin-bottom:10px; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px;">Max PDFs per query</p>
+      <div class="max-docs-row">
+        <label>How many PDFs Claude reads per question.<br><span style="font-size:11px; color:var(--text3);">Higher = more thorough but slower & costs more.</span></label>
+        <select id="max-docs-select">
+          <option value="3">3 PDFs</option>
+          <option value="5" selected>5 PDFs</option>
+          <option value="8">8 PDFs</option>
+          <option value="10">10 PDFs</option>
+        </select>
+      </div>
 
       <p style="font-size:13px; font-weight:600; margin-bottom:14px; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px;">API Key</p>
       <div class="field-group">
         <input type="password" id="api-key-settings" placeholder="sk-ant-..." />
         <small>Update your Anthropic API key here.</small>
       </div>
-
       <button class="save-btn" onclick="saveSettings()">Save Settings</button>
       <button onclick="signOut()" style="width:100%; font-family:'DM Sans',sans-serif; font-size:13px; padding:11px; border-radius:var(--radius); border:1px solid var(--border2); background:none; color:var(--danger); cursor:pointer; margin-top:10px;">Sign out</button>
     </div>
@@ -471,13 +218,10 @@
 </div>
 
 <script>
-// ═══════════════════════════════════════════
-// CONFIG & STATE
-// ═══════════════════════════════════════════
 const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
 let tokenClient = null;
 let accessToken = null;
-let documents = []; // { id, name, content }
+let allFiles = []; // just metadata: {id, name, size}
 let folderId = null;
 let folderName = null;
 
@@ -486,22 +230,18 @@ function getConfig() {
     clientId: localStorage.getItem('nr_client_id') || '',
     apiKey: localStorage.getItem('nr_api_key') || '',
     folderId: localStorage.getItem('nr_folder_id') || '',
-    folderName: localStorage.getItem('nr_folder_name') || ''
+    folderName: localStorage.getItem('nr_folder_name') || '',
+    maxDocs: parseInt(localStorage.getItem('nr_max_docs') || '5')
   };
 }
 
-// ═══════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════
 window.onload = function() {
   const cfg = getConfig();
   if (!cfg.clientId || !cfg.apiKey) {
-    // First time — show config screen
     document.getElementById('signin-screen').style.display = 'none';
     document.getElementById('config-screen').style.display = 'block';
     return;
   }
-  // Has config — show sign in
   document.getElementById('signin-screen').style.display = 'flex';
   loadGIS(cfg.clientId);
 };
@@ -522,51 +262,8 @@ function loadGIS(clientId) {
 }
 
 function startSignIn() {
-  if (!tokenClient) {
-    alert('Still loading Google Sign-In. Please wait a moment and try again.');
-    return;
-  }
-  // Use empty prompt so Google picks best flow for local files
+  if (!tokenClient) { alert('Still loading. Please wait a moment.'); return; }
   tokenClient.requestAccessToken({ prompt: '' });
-}
-
-// ═══════════════════════════════════════════
-// CONFIG SCREEN
-// ═══════════════════════════════════════════
-function saveConfig() {
-  const clientId = document.getElementById('client-id-input').value.trim();
-  const apiKey = document.getElementById('api-key-input').value.trim();
-  const errEl = document.getElementById('config-error');
-
-  if (!clientId || !apiKey) {
-    errEl.textContent = 'Both fields are required.';
-    errEl.classList.add('visible');
-    return;
-  }
-  if (!apiKey.startsWith('sk-ant-')) {
-    errEl.textContent = 'Anthropic API key should start with sk-ant-';
-    errEl.classList.add('visible');
-    return;
-  }
-
-  localStorage.setItem('nr_client_id', clientId);
-  localStorage.setItem('nr_api_key', apiKey);
-  errEl.classList.remove('visible');
-
-  document.getElementById('config-screen').style.display = 'none';
-  document.getElementById('signin-screen').style.display = 'flex';
-  loadGIS(clientId);
-}
-
-// ═══════════════════════════════════════════
-// SIGN IN
-// ═══════════════════════════════════════════
-function startSignIn() {
-  if (!tokenClient) {
-    alert('Still loading Google Sign-In. Please wait a moment and try again.');
-    return;
-  }
-  tokenClient.requestAccessToken({ prompt: 'consent' });
 }
 
 function onTokenResponse(resp) {
@@ -574,37 +271,48 @@ function onTokenResponse(resp) {
   accessToken = resp.access_token;
   document.getElementById('signin-screen').style.display = 'none';
   document.getElementById('main-app').style.display = 'block';
-
   const cfg = getConfig();
   folderId = cfg.folderId;
   folderName = cfg.folderName;
-
-  if (folderName) {
-    document.getElementById('folder-name-display').textContent = folderName;
-  }
+  if (folderName) document.getElementById('folder-name-display').textContent = folderName;
   document.getElementById('api-key-settings').value = cfg.apiKey;
-
-  if (folderId) {
-    loadDocuments();
-  } else {
-    document.getElementById('empty-state').style.display = 'block';
-  }
+  const maxSel = document.getElementById('max-docs-select');
+  maxSel.value = cfg.maxDocs;
+  if (folderId) loadDocumentList();
+  else document.getElementById('empty-state').style.display = 'block';
 }
 
 function signOut() {
-  accessToken = null;
-  documents = [];
+  accessToken = null; allFiles = [];
   document.getElementById('main-app').style.display = 'none';
   document.getElementById('signin-screen').style.display = 'flex';
   showTab('search');
 }
 
-// ═══════════════════════════════════════════
-// FOLDER PICKER
-// ═══════════════════════════════════════════
+function saveConfig() {
+  const clientId = document.getElementById('client-id-input').value.trim();
+  const apiKey = document.getElementById('api-key-input').value.trim();
+  const errEl = document.getElementById('config-error');
+  if (!clientId || !apiKey) { errEl.textContent = 'Both fields are required.'; errEl.classList.add('visible'); return; }
+  if (!apiKey.startsWith('sk-ant-')) { errEl.textContent = 'Anthropic API key should start with sk-ant-'; errEl.classList.add('visible'); return; }
+  localStorage.setItem('nr_client_id', clientId);
+  localStorage.setItem('nr_api_key', apiKey);
+  errEl.classList.remove('visible');
+  document.getElementById('config-screen').style.display = 'none';
+  document.getElementById('signin-screen').style.display = 'flex';
+  loadGIS(clientId);
+}
+
+function saveSettings() {
+  const apiKey = document.getElementById('api-key-settings').value.trim();
+  const maxDocs = document.getElementById('max-docs-select').value;
+  if (apiKey) localStorage.setItem('nr_api_key', apiKey);
+  localStorage.setItem('nr_max_docs', maxDocs);
+  alert('Settings saved!');
+}
+
 async function pickFolder() {
   if (!accessToken) return;
-  // List root folders
   try {
     const res = await fetch(
       `https://www.googleapis.com/drive/v3/files?q=mimeType='application/vnd.google-apps.folder' and trashed=false&fields=files(id,name)&orderBy=name`,
@@ -612,136 +320,122 @@ async function pickFolder() {
     );
     const data = await res.json();
     const folders = data.files || [];
-
     if (!folders.length) { alert('No folders found in your Drive.'); return; }
-
     const names = folders.map((f, i) => `${i + 1}. ${f.name}`).join('\n');
-    const choice = prompt(`Your folders:\n\n${names}\n\nEnter the number of the folder with your notes:`);
+    const choice = prompt(`Your folders:\n\n${names}\n\nEnter the number:`);
     const idx = parseInt(choice) - 1;
     if (isNaN(idx) || idx < 0 || idx >= folders.length) return;
-
     folderId = folders[idx].id;
     folderName = folders[idx].name;
     localStorage.setItem('nr_folder_id', folderId);
     localStorage.setItem('nr_folder_name', folderName);
     document.getElementById('folder-name-display').textContent = folderName;
     alert(`Folder "${folderName}" selected! Go to Search and tap Refresh.`);
-  } catch(e) {
-    alert('Error loading folders: ' + e.message);
-  }
+  } catch(e) { alert('Error: ' + e.message); }
 }
 
-// ═══════════════════════════════════════════
-// LOAD DOCUMENTS
-// ═══════════════════════════════════════════
-async function loadDocuments() {
-  if (!accessToken) return;
-  if (!folderId) { alert('Please select a folder in Settings first.'); showTab('settings'); return; }
-
+// ── Load only file metadata (names + ids), no content yet ──
+async function loadDocumentList() {
+  if (!accessToken || !folderId) { alert('Please select a folder in Settings first.'); showTab('settings'); return; }
   const countEl = document.getElementById('doc-count');
   const listEl = document.getElementById('doc-list');
   const emptyEl = document.getElementById('empty-state');
   const labelEl = document.getElementById('docs-label');
-
-  countEl.textContent = 'Loading documents…';
+  countEl.textContent = 'Loading file list…';
   listEl.innerHTML = '';
   emptyEl.style.display = 'none';
 
   try {
-    const res = await fetch(
-      `https://www.googleapis.com/drive/v3/files?q='${folderId}' in parents and mimeType='application/pdf' and trashed=false&fields=files(id,name,size,modifiedTime)&orderBy=name`,
-      { headers: { Authorization: 'Bearer ' + accessToken } }
-    );
-    const data = await res.json();
-    const files = data.files || [];
+    // Fetch ALL files with pagination
+    let allFetched = [];
+    let pageToken = null;
+    do {
+      const pageParam = pageToken ? `&pageToken=${pageToken}` : '';
+      const res = await fetch(
+        `https://www.googleapis.com/drive/v3/files?q='${folderId}' in parents and mimeType='application/pdf' and trashed=false&fields=nextPageToken,files(id,name,size)&orderBy=name&pageSize=100${pageParam}`,
+        { headers: { Authorization: 'Bearer ' + accessToken } }
+      );
+      const data = await res.json();
+      allFetched = allFetched.concat(data.files || []);
+      pageToken = data.nextPageToken || null;
+    } while (pageToken);
 
-    if (!files.length) {
+    allFiles = allFetched;
+
+    if (!allFiles.length) {
       countEl.textContent = 'No PDFs found in folder';
       emptyEl.querySelector('p').textContent = 'No PDF files found in the selected folder.';
       emptyEl.style.display = 'block';
       return;
     }
 
-    countEl.textContent = `${files.length} PDF${files.length > 1 ? 's' : ''} in "${folderName}"`;
+    countEl.textContent = `${allFiles.length} PDFs ready — ask a question to search`;
     labelEl.style.display = 'block';
 
-    // Fetch content of each PDF
-    documents = [];
-    listEl.innerHTML = files.map(f => `
-      <div class="doc-card" id="doc-${f.id}">
-        <div class="doc-icon">
-          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-        </div>
+    listEl.innerHTML = allFiles.map(f => {
+      const kb = f.size ? Math.round(parseInt(f.size) / 1024) + ' KB' : '';
+      return `<div class="doc-card">
+        <div class="doc-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg></div>
         <div class="doc-info">
           <div class="doc-name">${f.name}</div>
-          <div class="doc-meta" id="meta-${f.id}">Loading…</div>
+          <div class="doc-meta">${kb}</div>
         </div>
-      </div>
-    `).join('');
-
-    // Load each PDF text
-    for (const file of files) {
-      await loadPDF(file);
-    }
-
-    countEl.textContent = `${documents.length} of ${files.length} PDFs loaded — ready to search`;
+        <span class="doc-status ready">✓</span>
+      </div>`;
+    }).join('');
 
   } catch(e) {
     countEl.textContent = 'Error loading documents';
-    alert('Failed to load documents: ' + e.message);
+    alert('Failed to load: ' + e.message);
   }
 }
 
-async function loadPDF(file) {
-  const metaEl = document.getElementById('meta-' + file.id);
-  try {
-    // Download the PDF as base64
-    const res = await fetch(
-      `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`,
-      { headers: { Authorization: 'Bearer ' + accessToken } }
-    );
-    const blob = await res.blob();
-    const base64 = await blobToBase64(blob);
+// ── Step 1: Ask Claude which files are relevant ──
+async function selectRelevantFiles(question, fileNames, maxDocs) {
+  const cfg = getConfig();
+  const fileList = fileNames.map((n, i) => `${i+1}. ${n}`).join('\n');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': cfg.apiKey, 'anthropic-version': '2023-06-01' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 200,
+      system: `You are a file selector. Given a list of PDF filenames and a question, return ONLY a JSON array of the numbers (1-based) of the most relevant files to answer the question. Return at most ${maxDocs} files. Example: [1,3,7]. Return ONLY the JSON array, nothing else.`,
+      messages: [{ role: 'user', content: `Files:\n${fileList}\n\nQuestion: ${question}` }]
+    })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  const text = data.content.map(b => b.text || '').join('').trim();
+  const clean = text.replace(/```json|```/g, '').trim();
+  const indices = JSON.parse(clean);
+  return indices.map(i => parseInt(i) - 1).filter(i => i >= 0 && i < fileNames.length);
+}
 
-    documents.push({ id: file.id, name: file.name, base64, mimeType: 'application/pdf' });
-
-    const kb = Math.round(blob.size / 1024);
-    metaEl.textContent = `${kb} KB · ready`;
-
-    // show checkmark
-    const card = document.getElementById('doc-' + file.id);
-    if (card) {
-      const check = document.createElement('svg');
-      check.setAttribute('fill', 'none');
-      check.setAttribute('viewBox', '0 0 24 24');
-      check.setAttribute('stroke', 'currentColor');
-      check.setAttribute('stroke-width', '2.5');
-      check.classList.add('doc-check');
-      check.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>';
-      card.appendChild(check);
-    }
-  } catch(e) {
-    metaEl.textContent = 'Failed to load';
-  }
+// ── Step 2: Fetch and read selected PDFs ──
+async function fetchPDF(fileId) {
+  const res = await fetch(
+    `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+    { headers: { Authorization: 'Bearer ' + accessToken } }
+  );
+  const blob = await res.blob();
+  return await blobToBase64(blob);
 }
 
 function blobToBase64(blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result.split(',')[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(blob);
   });
 }
 
-// ═══════════════════════════════════════════
-// ASK QUESTION
-// ═══════════════════════════════════════════
+// ── Step 3: Ask Claude with actual PDF content ──
 async function askQuestion() {
   const q = document.getElementById('question-input').value.trim();
   if (!q) return;
-  if (!documents.length) { alert('Please load your documents first by tapping Refresh.'); return; }
-
+  if (!allFiles.length) { alert('Please load your documents first by tapping Refresh.'); return; }
   const cfg = getConfig();
   if (!cfg.apiKey) { alert('No API key found. Please check Settings.'); return; }
 
@@ -749,50 +443,66 @@ async function askQuestion() {
   const panel = document.getElementById('answer-panel');
   const bodyEl = document.getElementById('answer-body');
   const sourcesEl = document.getElementById('answer-sources');
+  const stepEl = document.getElementById('step-indicator');
+  const stepText = document.getElementById('step-text');
 
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>';
   panel.classList.add('visible');
-  bodyEl.textContent = 'Reading your notes…';
+  stepEl.style.display = 'flex';
+  bodyEl.textContent = '';
   sourcesEl.innerHTML = '';
 
-  // Build message with all PDFs as document blocks
-  const contentBlocks = documents.map(doc => ({
-    type: 'document',
-    source: { type: 'base64', media_type: doc.mimeType, data: doc.base64 },
-    title: doc.name
-  }));
-  contentBlocks.push({ type: 'text', text: `Based on the documents above, answer this question as clearly and concisely as possible. If the answer spans multiple documents, mention which ones.\n\nQuestion: ${q}` });
-
   try {
+    // Step 1: select relevant files
+    stepText.textContent = `Step 1 of 3 — Scanning ${allFiles.length} filenames…`;
+    const fileNames = allFiles.map(f => f.name);
+    const maxDocs = cfg.maxDocs;
+    let selectedIndices;
+    try {
+      selectedIndices = await selectRelevantFiles(q, fileNames, maxDocs);
+    } catch(e) {
+      // fallback: just take first maxDocs files
+      selectedIndices = Array.from({length: Math.min(maxDocs, allFiles.length)}, (_, i) => i);
+    }
+    if (!selectedIndices.length) selectedIndices = [0, 1, 2].slice(0, Math.min(3, allFiles.length));
+
+    const selectedFiles = selectedIndices.map(i => allFiles[i]);
+
+    // Step 2: fetch PDFs
+    stepText.textContent = `Step 2 of 3 — Reading ${selectedFiles.length} relevant PDFs…`;
+    const pdfBlocks = [];
+    for (const file of selectedFiles) {
+      const b64 = await fetchPDF(file.id);
+      pdfBlocks.push({ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 }, title: file.name });
+    }
+
+    // Step 3: ask Claude
+    stepText.textContent = `Step 3 of 3 — Generating answer…`;
+    pdfBlocks.push({ type: 'text', text: `Based on the documents above, answer this question clearly and concisely. Mention which document contains the information.\n\nQuestion: ${q}` });
+
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': cfg.apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-beta': 'pdfs-2024-09-25'
-      },
+      headers: { 'Content-Type': 'application/json', 'x-api-key': cfg.apiKey, 'anthropic-version': '2023-06-01', 'anthropic-beta': 'pdfs-2024-09-25' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
-        system: 'You are a personal assistant helping the user find information in their own private notes and documents. Be concise, specific, and cite which document contains the information. If the answer is not in the documents, say so honestly.',
-        messages: [{ role: 'user', content: contentBlocks }]
+        system: 'You are a personal assistant helping the user find information in their own private notes and documents. Be concise and specific. If the answer is not in the provided documents, say so honestly.',
+        messages: [{ role: 'user', content: pdfBlocks }]
       })
     });
-
     const data = await res.json();
     if (data.error) throw new Error(data.error.message);
-
     const text = data.content?.map(b => b.text || '').join('') || 'No answer found.';
-    bodyEl.textContent = text;
 
-    // Show source tags
-    sourcesEl.innerHTML = documents.map(d =>
-      `<span class="source-tag">${d.name.replace('.pdf','')}</span>`
+    stepEl.style.display = 'none';
+    bodyEl.textContent = text;
+    sourcesEl.innerHTML = selectedFiles.map(f =>
+      `<span class="source-tag">${f.name.replace('.pdf','').replace('.PDF','')}</span>`
     ).join('');
 
   } catch(e) {
+    stepEl.style.display = 'none';
     bodyEl.textContent = 'Error: ' + e.message;
   }
 
@@ -800,30 +510,18 @@ async function askQuestion() {
   btn.textContent = 'Ask';
 }
 
-// ═══════════════════════════════════════════
-// SETTINGS
-// ═══════════════════════════════════════════
-function saveSettings() {
-  const apiKey = document.getElementById('api-key-settings').value.trim();
-  if (apiKey) localStorage.setItem('nr_api_key', apiKey);
-  alert('Settings saved!');
-}
-
 function showTab(tab) {
   const searchEls = document.querySelectorAll('.search-wrap, .answer-panel, #docs-label, #doc-list, #empty-state, .header');
   const settingsEl = document.getElementById('settings-panel');
   const navItems = document.querySelectorAll('.nav-item');
-
   if (tab === 'search') {
-    searchEls.forEach(el => el.style.display = '');
+    searchEls.forEach(el => { el.style.display = ''; });
     settingsEl.style.display = 'none';
-    navItems[0].classList.add('active');
-    navItems[1].classList.remove('active');
+    navItems[0].classList.add('active'); navItems[1].classList.remove('active');
   } else {
-    searchEls.forEach(el => el.style.display = 'none');
+    searchEls.forEach(el => { el.style.display = 'none'; });
     settingsEl.style.display = 'block';
-    navItems[0].classList.remove('active');
-    navItems[1].classList.add('active');
+    navItems[0].classList.remove('active'); navItems[1].classList.add('active');
   }
 }
 </script>
