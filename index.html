@@ -112,6 +112,23 @@
   .top-k-row label { font-size: 13px; color: var(--text2); flex: 1; line-height: 1.5; }
   .top-k-row select { font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text); outline: none; }
   #main-app { display: none; }
+  /* Source picker */
+  .source-picker { padding: 12px 20px 4px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .source-picker-label { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .source-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+  .source-tabs::-webkit-scrollbar { display: none; }
+  .source-tab { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border2); background: var(--surface); color: var(--text2); cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: all 0.15s; }
+  .source-tab:hover { background: var(--surface2); }
+  .source-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .source-tab.all { font-style: italic; }
+  /* Source manager (settings) */
+  .source-row { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--surface2); border-radius: var(--radius-sm); margin-bottom: 6px; border: 1px solid var(--border); }
+  .source-row-info { flex: 1; min-width: 0; }
+  .source-row-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .source-row-id { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .source-row button { font-family: 'DM Sans', sans-serif; font-size: 11px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border2); background: var(--surface); color: var(--danger); cursor: pointer; flex-shrink: 0; }
+  .add-source-btn { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 10px; border-radius: var(--radius-sm); border: 1px dashed var(--border2); background: none; color: var(--text2); cursor: pointer; margin-top: 8px; }
+  .add-source-btn:hover { background: var(--surface2); }
 </style>
 </head>
 <body>
@@ -145,6 +162,11 @@
     <small>From console.anthropic.com → API Keys</small>
   </div>
   <div class="field-group">
+    <label class="field-label">First source name</label>
+    <input type="text" id="source-name-input" placeholder="e.g. Counselling Notes" />
+    <small>A short name for this collection of notes</small>
+  </div>
+  <div class="field-group">
     <label class="field-label">Google Sheet ID</label>
     <input type="text" id="sheet-id-input" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms" />
     <small>From your Sheet URL: docs.google.com/spreadsheets/d/<strong>THIS_PART</strong>/edit</small>
@@ -165,6 +187,11 @@
         </button>
       </div>
       <div class="doc-count" id="doc-count">Loading index…</div>
+    </div>
+
+    <div class="source-picker" id="source-picker">
+      <div class="source-picker-label">Active source</div>
+      <div class="source-tabs" id="source-tabs"></div>
     </div>
 
     <div class="search-wrap">
@@ -245,11 +272,13 @@
         <label class="field-label">Anthropic API Key</label>
         <input type="password" id="api-key-settings" placeholder="sk-ant-..." />
       </div>
-      <div class="field-group">
-        <label class="field-label">Google Sheet ID</label>
-        <input type="text" id="sheet-id-settings" placeholder="Sheet ID" style="font-family:'DM Mono',monospace; font-size:12px;" />
-      </div>
-      <button class="save-btn" onclick="saveSettings()">Save Settings</button>
+      <button class="save-btn" onclick="saveSettings()">Save API Key</button>
+    </div>
+
+    <div class="settings-section">
+      <p class="settings-title">Note Sources</p>
+      <div id="sources-manager-list"></div>
+      <button class="add-source-btn" onclick="addNewSource()">+ Add another source</button>
     </div>
 
     <div class="settings-section">
@@ -269,12 +298,24 @@ let indexChunks = []; // [{fileName, fileId, page, chunkIndex, totalChunks, driv
 let fileMap = {};     // fileName → {fileId, driveLink, pages}
 
 function getConfig() {
+  // Migrate old single-sheet config to new multi-source format
+  const oldSheetId = localStorage.getItem('nr_sheet_id');
+  let sources = JSON.parse(localStorage.getItem('nr_sources') || '[]');
+  if (oldSheetId && sources.length === 0) {
+    sources = [{ name: 'My Notes', sheetId: oldSheetId }];
+    localStorage.setItem('nr_sources', JSON.stringify(sources));
+  }
   return {
     clientId: localStorage.getItem('nr_client_id') || '',
     apiKey:   localStorage.getItem('nr_api_key') || '',
-    sheetId:  localStorage.getItem('nr_sheet_id') || '',
+    sources:  sources,
+    activeSourceIdx: parseInt(localStorage.getItem('nr_active_source') || '0'),
     topK:     parseInt(localStorage.getItem('nr_top_k') || '10')
   };
+}
+
+function saveSources(sources) {
+  localStorage.setItem('nr_sources', JSON.stringify(sources));
 }
 
 // ═══════════════════════════════════
@@ -282,7 +323,7 @@ function getConfig() {
 // ═══════════════════════════════════
 window.onload = function() {
   const cfg = getConfig();
-  if (!cfg.clientId || !cfg.apiKey || !cfg.sheetId) {
+  if (!cfg.clientId || !cfg.apiKey || !cfg.sources.length) {
     document.getElementById('signin-screen').style.display = 'none';
     document.getElementById('config-screen').style.display = 'block';
     return;
@@ -317,8 +358,9 @@ function onTokenResponse(resp) {
   document.getElementById('main-app').style.display = 'block';
   const cfg = getConfig();
   document.getElementById('api-key-settings').value = cfg.apiKey;
-  document.getElementById('sheet-id-settings').value = cfg.sheetId;
   document.getElementById('top-k-select').value = cfg.topK;
+  renderSourceTabs();
+  renderSourcesManager();
   loadIndex();
 }
 
@@ -333,15 +375,17 @@ function signOut() {
 // CONFIG
 // ═══════════════════════════════════
 function saveConfig() {
-  const clientId = document.getElementById('client-id-input').value.trim();
-  const apiKey   = document.getElementById('api-key-input').value.trim();
-  const sheetId  = document.getElementById('sheet-id-input').value.trim();
-  const errEl    = document.getElementById('config-error');
-  if (!clientId || !apiKey || !sheetId) { errEl.textContent = 'All three fields are required.'; errEl.classList.add('visible'); return; }
+  const clientId   = document.getElementById('client-id-input').value.trim();
+  const apiKey     = document.getElementById('api-key-input').value.trim();
+  const sourceName = document.getElementById('source-name-input').value.trim() || 'My Notes';
+  const sheetId    = document.getElementById('sheet-id-input').value.trim();
+  const errEl      = document.getElementById('config-error');
+  if (!clientId || !apiKey || !sheetId) { errEl.textContent = 'Client ID, API Key, and Sheet ID are required.'; errEl.classList.add('visible'); return; }
   if (!apiKey.startsWith('sk-ant-')) { errEl.textContent = 'Anthropic API key should start with sk-ant-'; errEl.classList.add('visible'); return; }
   localStorage.setItem('nr_client_id', clientId);
   localStorage.setItem('nr_api_key', apiKey);
-  localStorage.setItem('nr_sheet_id', sheetId);
+  saveSources([{ name: sourceName, sheetId: sheetId }]);
+  localStorage.setItem('nr_active_source', '0');
   errEl.classList.remove('visible');
   document.getElementById('config-screen').style.display = 'none';
   document.getElementById('signin-screen').style.display = 'flex';
@@ -350,17 +394,96 @@ function saveConfig() {
 
 function saveSettings() {
   const apiKey  = document.getElementById('api-key-settings').value.trim();
-  const sheetId = document.getElementById('sheet-id-settings').value.trim();
   const topK    = document.getElementById('top-k-select').value;
   if (apiKey)  localStorage.setItem('nr_api_key', apiKey);
-  if (sheetId) localStorage.setItem('nr_sheet_id', sheetId);
   localStorage.setItem('nr_top_k', topK);
   alert('Settings saved!');
+}
+
+function addNewSource() {
+  const name = prompt('Name for this source (e.g. Work Notes, Recipes, Research):');
+  if (!name) return;
+  const sheetId = prompt('Google Sheet ID for this source:\n(from docs.google.com/spreadsheets/d/THIS_PART/edit)');
+  if (!sheetId) return;
+  const cfg = getConfig();
+  const sources = [...cfg.sources, { name: name.trim(), sheetId: sheetId.trim() }];
+  saveSources(sources);
+  renderSourcesManager();
+  renderSourceTabs();
+  alert('Source added! Switch to it from the Search tab.');
+}
+
+function removeSource(idx) {
+  const cfg = getConfig();
+  if (cfg.sources.length <= 1) { alert('You need at least one source.'); return; }
+  if (!confirm('Remove "' + cfg.sources[idx].name + '"? This only removes the link, not the actual Sheet.')) return;
+  const sources = cfg.sources.filter((_, i) => i !== idx);
+  saveSources(sources);
+  // Reset active if we removed it
+  if (cfg.activeSourceIdx >= sources.length) localStorage.setItem('nr_active_source', '0');
+  renderSourcesManager();
+  renderSourceTabs();
+  loadIndex();
+}
+
+function switchSource(idx) {
+  localStorage.setItem('nr_active_source', String(idx));
+  renderSourceTabs();
+  loadIndex();
+}
+
+function renderSourceTabs() {
+  const cfg = getConfig();
+  const el = document.getElementById('source-tabs');
+  if (!cfg.sources.length) { el.innerHTML = ''; return; }
+  let html = '';
+  for (let i = 0; i < cfg.sources.length; i++) {
+    const active = i === cfg.activeSourceIdx ? 'active' : '';
+    html += '<button class="source-tab ' + active + '" onclick="switchSource(' + i + ')">' + escapeHtml(cfg.sources[i].name) + '</button>';
+  }
+  // "All" tab — search across every source
+  const allActive = cfg.activeSourceIdx === -1 ? 'active' : '';
+  html += '<button class="source-tab all ' + allActive + '" onclick="switchSource(-1)">All sources</button>';
+  el.innerHTML = html;
+}
+
+function renderSourcesManager() {
+  const cfg = getConfig();
+  const el = document.getElementById('sources-manager-list');
+  if (!el) return;
+  el.innerHTML = cfg.sources.map((s, i) =>
+    '<div class="source-row"><div class="source-row-info"><div class="source-row-name">' + escapeHtml(s.name) + '</div><div class="source-row-id">' + escapeHtml(s.sheetId) + '</div></div><button onclick="removeSource(' + i + ')">Remove</button></div>'
+  ).join('');
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 // ═══════════════════════════════════
 // LOAD INDEX FROM GOOGLE SHEET
 // ═══════════════════════════════════
+async function loadOneSheet(sheetId, sourceName) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Notes%20Index!A2:G?majorDimension=ROWS`;
+  const res = await fetch(url, { headers: { Authorization: 'Bearer ' + accessToken } });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error('"' + sourceName + '": ' + (err.error?.message || 'Failed to read sheet'));
+  }
+  const data = await res.json();
+  const rows = data.values || [];
+  return rows.map(r => ({
+    fileName:    r[0] || '',
+    fileId:      r[1] || '',
+    page:        parseInt(r[2]) || 1,
+    chunkIndex:  parseInt(r[3]) || 1,
+    totalChunks: parseInt(r[4]) || 1,
+    driveLink:   r[5] || '',
+    text:        r[6] || '',
+    sourceName:  sourceName
+  })).filter(c => c.fileName && c.text);
+}
+
 async function loadIndex() {
   const cfg = getConfig();
   const countEl = document.getElementById('doc-count');
@@ -369,33 +492,31 @@ async function loadIndex() {
   document.getElementById('doc-list').innerHTML = '';
   document.getElementById('empty-state').style.display = 'none';
 
-  try {
-    // Fetch all rows from the Notes Index sheet tab
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/Notes%20Index!A2:G?majorDimension=ROWS`;
-    const res = await fetch(url, { headers: { Authorization: 'Bearer ' + accessToken } });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error?.message || 'Failed to read sheet');
-    }
-    const data = await res.json();
-    const rows = data.values || [];
+  // Determine which sources to load
+  let sourcesToLoad;
+  let activeLabel;
+  if (cfg.activeSourceIdx === -1) {
+    sourcesToLoad = cfg.sources;
+    activeLabel = 'All sources';
+  } else {
+    const idx = Math.min(cfg.activeSourceIdx, cfg.sources.length - 1);
+    sourcesToLoad = [cfg.sources[idx]];
+    activeLabel = cfg.sources[idx].name;
+  }
 
-    if (!rows.length) {
+  try {
+    let allChunks = [];
+    for (const src of sourcesToLoad) {
+      const chunks = await loadOneSheet(src.sheetId, src.name);
+      allChunks = allChunks.concat(chunks);
+    }
+    indexChunks = allChunks;
+
+    if (!indexChunks.length) {
       countEl.textContent = 'Index is empty — run the Apps Script first';
       document.getElementById('empty-state').style.display = 'block';
       return;
     }
-
-    // Parse rows: [fileName, fileId, page, chunkIndex, totalChunks, driveLink, text]
-    indexChunks = rows.map(r => ({
-      fileName:    r[0] || '',
-      fileId:      r[1] || '',
-      page:        parseInt(r[2]) || 1,
-      chunkIndex:  parseInt(r[3]) || 1,
-      totalChunks: parseInt(r[4]) || 1,
-      driveLink:   r[5] || '',
-      text:        r[6] || ''
-    })).filter(c => c.fileName && c.text);
 
     // Build file map for display
     fileMap = {};
@@ -408,8 +529,8 @@ async function loadIndex() {
     });
 
     const fileCount = Object.keys(fileMap).length;
-    countEl.textContent = `${fileCount} PDFs indexed · ${indexChunks.length} searchable chunks`;
-    document.getElementById('set-chunk-count').textContent = `${fileCount} files · ${indexChunks.length} chunks`;
+    countEl.textContent = activeLabel + ' — ' + fileCount + ' PDFs · ' + indexChunks.length + ' chunks';
+    document.getElementById('set-chunk-count').textContent = fileCount + ' files · ' + indexChunks.length + ' chunks';
     document.getElementById('docs-label').style.display = 'flex';
     document.getElementById('chunk-count').textContent = `${indexChunks.length} chunks`;
 
@@ -565,7 +686,7 @@ If the passages don't contain enough information to answer, say so honestly.`,
         <div class="source-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg></div>
         <div class="source-info">
           <div class="source-name">${c.fileName.replace(/\.pdf$/i,'')}</div>
-          <div class="source-meta">Page ${c.page} of ${fileMap[c.fileName]?.maxPage || '?'}</div>
+          <div class="source-meta">${c.sourceName ? escapeHtml(c.sourceName) + ' · ' : ''}Page ${c.page} of ${fileMap[c.fileName]?.maxPage || '?'}</div>
         </div>
         <span class="source-arrow">↗</span>
       </a>`
