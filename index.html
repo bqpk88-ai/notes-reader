@@ -15,6 +15,7 @@
     --text: #1A1917; --text2: #6B6860; --text3: #9E9B93;
     --accent: #2A5C45; --accent-light: #EAF2ED; --accent-text: #1C3D2E;
     --danger: #C0392B; --danger-light: #FDECEA;
+    --warning: #92610A; --warning-light: #FEF3E2;
     --radius: 12px; --radius-sm: 8px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -29,7 +30,7 @@
   .doc-count { font-size: 12px; color: var(--text3); }
   .search-wrap { padding: 14px 20px 0; }
   .search-inner { position: relative; }
-  .search-inner svg.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text3); pointer-events: none; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text3); pointer-events: none; }
   .search-inner input { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 11px 70px 11px 38px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface2); color: var(--text); outline: none; transition: border 0.15s, background 0.15s; }
   .search-inner input:focus { border-color: var(--accent); background: var(--surface); }
   .search-inner input::placeholder { color: var(--text3); }
@@ -41,11 +42,28 @@
   .answer-header { background: var(--accent-light); padding: 9px 14px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--border); }
   .answer-header svg { width: 14px; height: 14px; color: var(--accent); flex-shrink: 0; }
   .answer-header span { font-size: 11px; font-weight: 600; color: var(--accent-text); letter-spacing: 0.5px; text-transform: uppercase; }
-  .answer-body { padding: 14px; font-size: 14px; line-height: 1.75; color: var(--text); white-space: pre-wrap; }
-  .answer-sources { padding: 0 14px 12px; display: flex; flex-wrap: wrap; gap: 6px; }
-  .source-tag { font-size: 11px; padding: 3px 9px; border-radius: 999px; background: var(--surface2); color: var(--text2); border: 1px solid var(--border); font-family: 'DM Mono', monospace; }
   .step-indicator { font-size: 11px; color: var(--accent); padding: 6px 14px; background: var(--accent-light); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
-  .section-label { padding: 18px 20px 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text3); }
+  .answer-body { padding: 14px; font-size: 14px; line-height: 1.75; color: var(--text); white-space: pre-wrap; }
+  /* Source citations */
+  .sources-section { border-top: 1px solid var(--border); padding: 12px 14px; }
+  .sources-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .source-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 6px; display: flex; align-items: flex-start; gap: 10px; text-decoration: none; }
+  .source-card:last-child { margin-bottom: 0; }
+  .source-card:hover { border-color: var(--accent); }
+  .source-icon { width: 28px; height: 28px; border-radius: 6px; background: #FEF2F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .source-icon svg { width: 14px; height: 14px; color: #E74C3C; }
+  .source-info { flex: 1; min-width: 0; }
+  .source-name { font-size: 12px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .source-meta { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: 'DM Mono', monospace; }
+  .source-arrow { font-size: 14px; color: var(--text3); align-self: center; flex-shrink: 0; }
+  /* Stats bar */
+  .stats-bar { margin: 10px 20px 0; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 14px; display: none; }
+  .stats-bar.visible { display: flex; gap: 16px; }
+  .stat { font-size: 11px; color: var(--text2); }
+  .stat strong { color: var(--accent); font-weight: 600; }
+  /* Doc list */
+  .section-label { padding: 18px 20px 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text3); display: flex; justify-content: space-between; align-items: center; }
+  .section-label span { font-size: 10px; font-weight: 400; color: var(--text3); font-family: 'DM Mono', monospace; }
   .doc-list { padding: 0 20px; display: flex; flex-direction: column; gap: 8px; }
   .doc-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 13px 14px; display: flex; align-items: center; gap: 12px; }
   .doc-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); background: #FEF2F2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -53,25 +71,22 @@
   .doc-info { flex: 1; min-width: 0; }
   .doc-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .doc-meta { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: 'DM Mono', monospace; }
-  .doc-status { font-size: 11px; font-weight: 500; flex-shrink: 0; }
-  .doc-status.ready { color: var(--accent); }
-  .doc-status.loading { color: var(--text3); }
-  .doc-status.error { color: var(--danger); }
   .state-box { margin: 40px 20px 0; padding: 32px 24px; background: var(--surface); border: 1px dashed var(--border2); border-radius: var(--radius); text-align: center; }
   .state-box svg { width: 40px; height: 40px; color: var(--text3); margin-bottom: 12px; }
   .state-box p { font-size: 14px; color: var(--text2); line-height: 1.6; }
   .state-box small { font-size: 12px; color: var(--text3); display: block; margin-top: 6px; }
-  #signin-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; text-align: center; background: var(--bg); }
+  /* Sign in */
+  #signin-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; text-align: center; }
   .logo-mark { width: 64px; height: 64px; background: var(--accent); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
   .logo-mark svg { width: 32px; height: 32px; color: #fff; }
   #signin-screen h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 8px; }
   #signin-screen p { font-size: 14px; color: var(--text2); line-height: 1.6; max-width: 300px; margin: 0 auto 28px; }
   .signin-btn { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; padding: 13px 24px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--surface); color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 10px; margin: 0 auto; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
   .signin-btn:hover { background: var(--surface2); }
-  .signin-btn svg { width: 20px; height: 20px; }
+  /* Config */
   #config-screen { display: none; padding: 32px 24px; max-width: 480px; margin: 0 auto; }
   #config-screen h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
-  #config-screen p { font-size: 13px; color: var(--text2); margin-bottom: 24px; line-height: 1.6; }
+  #config-screen > p { font-size: 13px; color: var(--text2); margin-bottom: 24px; line-height: 1.6; }
   .field-label { font-size: 12px; font-weight: 600; color: var(--text2); letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 6px; display: block; }
   .field-group { margin-bottom: 16px; }
   .field-group input { width: 100%; font-family: 'DM Mono', monospace; font-size: 13px; padding: 11px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text); outline: none; transition: border 0.15s; }
@@ -79,22 +94,24 @@
   .field-group small { font-size: 11px; color: var(--text3); display: block; margin-top: 5px; line-height: 1.5; }
   .save-btn { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; padding: 13px; border-radius: var(--radius); border: none; background: var(--accent); color: #fff; cursor: pointer; transition: opacity 0.15s; margin-top: 8px; }
   .save-btn:hover { opacity: 0.85; }
+  .error-msg { font-size: 12px; color: var(--danger); background: var(--danger-light); padding: 8px 12px; border-radius: var(--radius-sm); margin-top: 10px; display: none; }
+  .error-msg.visible { display: block; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: -2px; }
   .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; max-width: 480px; margin: 0 auto; background: var(--surface); border-top: 1px solid var(--border); display: flex; padding: 8px 0 env(safe-area-inset-bottom, 8px); }
   .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px; cursor: pointer; color: var(--text3); font-size: 10px; font-weight: 500; transition: color 0.15s; border: none; background: none; font-family: 'DM Sans', sans-serif; }
   .nav-item svg { width: 22px; height: 22px; }
   .nav-item.active { color: var(--accent); }
-  .folder-row { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--surface2); border-radius: var(--radius-sm); margin-bottom: 12px; border: 1px solid var(--border); }
-  .folder-row svg { width: 16px; height: 16px; color: var(--text2); flex-shrink: 0; }
-  .folder-row span { font-size: 13px; color: var(--text2); font-family: 'DM Mono', monospace; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .folder-row button { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border2); background: var(--surface); color: var(--text2); cursor: pointer; }
-  .error-msg { font-size: 12px; color: var(--danger); background: var(--danger-light); padding: 8px 12px; border-radius: var(--radius-sm); margin-top: 10px; display: none; }
-  .error-msg.visible { display: block; }
+  /* Settings */
+  #settings-panel { display: none; padding: 20px; padding-bottom: 80px; }
+  .settings-section { max-width: 440px; margin: 0 auto 24px; }
+  .settings-title { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+  .info-row { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; color: var(--text2); font-family: 'DM Mono', monospace; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+  .info-row button { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border2); background: var(--surface); color: var(--text2); cursor: pointer; }
+  .top-k-row { display: flex; align-items: center; gap: 10px; }
+  .top-k-row label { font-size: 13px; color: var(--text2); flex: 1; line-height: 1.5; }
+  .top-k-row select { font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text); outline: none; }
   #main-app { display: none; }
-  .max-docs-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-  .max-docs-row label { font-size: 13px; color: var(--text2); flex: 1; }
-  .max-docs-row select { font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text); outline: none; }
 </style>
 </head>
 <body>
@@ -105,9 +122,9 @@
     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
   </div>
   <h2>Notes Reader</h2>
-  <p>Ask questions across all your PDF notes stored in Google Drive. Powered by Claude AI.</p>
+  <p>Ask questions across all your PDF notes. Answers include page numbers so you can go back to the source.</p>
   <button class="signin-btn" onclick="startSignIn()">
-    <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+    <svg viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
     Sign in with Google
   </button>
   <p style="margin-top:20px; font-size:12px; color:var(--text3);">Your notes never leave your device except when querying Claude AI.</p>
@@ -127,6 +144,11 @@
     <input type="password" id="api-key-input" placeholder="sk-ant-..." />
     <small>From console.anthropic.com → API Keys</small>
   </div>
+  <div class="field-group">
+    <label class="field-label">Google Sheet ID</label>
+    <input type="text" id="sheet-id-input" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms" />
+    <small>From your Sheet URL: docs.google.com/spreadsheets/d/<strong>THIS_PART</strong>/edit</small>
+  </div>
   <button class="save-btn" onclick="saveConfig()">Save & Continue →</button>
   <div class="error-msg" id="config-error"></div>
 </div>
@@ -137,12 +159,12 @@
     <div class="header">
       <div class="header-top">
         <h1>Notes <span>Reader</span></h1>
-        <button class="sync-btn" onclick="loadDocumentList()">
-          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        <button class="sync-btn" id="sync-btn" onclick="loadIndex()">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="13" height="13"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
           Refresh
         </button>
       </div>
-      <div class="doc-count" id="doc-count">No documents loaded</div>
+      <div class="doc-count" id="doc-count">Loading index…</div>
     </div>
 
     <div class="search-wrap">
@@ -153,25 +175,33 @@
       </div>
     </div>
 
+    <div class="stats-bar" id="stats-bar"></div>
+
     <div class="answer-panel" id="answer-panel">
       <div class="answer-header">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
         <span>AI Answer</span>
       </div>
       <div class="step-indicator" id="step-indicator" style="display:none;">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
         <span id="step-text"></span>
       </div>
       <div class="answer-body" id="answer-body"></div>
-      <div class="answer-sources" id="answer-sources"></div>
+      <div class="sources-section" id="sources-section" style="display:none;">
+        <div class="sources-label">Sources — tap to open PDF</div>
+        <div id="sources-list"></div>
+      </div>
     </div>
 
-    <div class="section-label" id="docs-label" style="display:none;">Your Documents</div>
+    <div class="section-label" id="docs-label" style="display:none;">
+      Indexed Documents
+      <span id="chunk-count"></span>
+    </div>
     <div class="doc-list" id="doc-list"></div>
-    <div class="state-box" id="empty-state">
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
-      <p>No documents loaded yet.<br>Select your Google Drive folder in Settings.</p>
-      <small>Tap Settings → choose folder → Refresh</small>
+    <div class="state-box" id="empty-state" style="display:none;">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      <p>No index found.<br>Run the Google Apps Script first to extract your PDFs.</p>
+      <small>See setup instructions in Settings</small>
     </div>
   </div>
 
@@ -186,58 +216,73 @@
     </button>
   </nav>
 
-  <div id="settings-panel" style="display:none; padding: 20px; padding-bottom: 80px;">
-    <div style="max-width:440px; margin: 0 auto;">
-      <p style="font-size:13px; font-weight:600; margin-bottom:14px; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px;">Google Drive Folder</p>
-      <div class="folder-row">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
-        <span id="folder-name-display">No folder selected</span>
-        <button onclick="pickFolder()">Change</button>
+  <div id="settings-panel">
+    <div class="settings-section">
+      <p class="settings-title">Index Status</p>
+      <div class="info-row"><span id="set-chunk-count">—</span><button onclick="loadIndex()">Reload</button></div>
+      <div class="info-row" style="flex-direction:column; align-items:flex-start; gap:4px; font-size:12px; line-height:1.6;">
+        <strong style="font-family:'DM Sans',sans-serif; font-size:12px;">To add new PDFs:</strong>
+        Add files to your Drive folder → run <code>updateIndex()</code> in Apps Script → tap Reload here
       </div>
+    </div>
 
-      <p style="font-size:13px; font-weight:600; margin-bottom:10px; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px;">Max PDFs per query</p>
-      <div class="max-docs-row">
-        <label>How many PDFs Claude reads per question.<br><span style="font-size:11px; color:var(--text3);">Higher = more thorough but slower & costs more.</span></label>
-        <select id="max-docs-select">
-          <option value="3">3 PDFs</option>
-          <option value="5" selected>5 PDFs</option>
-          <option value="8">8 PDFs</option>
-          <option value="10">10 PDFs</option>
+    <div class="settings-section">
+      <p class="settings-title">Search Settings</p>
+      <div class="top-k-row" style="margin-bottom:12px;">
+        <label>Chunks per query<br><small style="color:var(--text3);">More = thorough but costs more API tokens</small></label>
+        <select id="top-k-select">
+          <option value="5">5 chunks</option>
+          <option value="10" selected>10 chunks</option>
+          <option value="15">15 chunks</option>
+          <option value="20">20 chunks</option>
         </select>
       </div>
+    </div>
 
-      <p style="font-size:13px; font-weight:600; margin-bottom:14px; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px;">API Key</p>
+    <div class="settings-section">
+      <p class="settings-title">Credentials</p>
       <div class="field-group">
+        <label class="field-label">Anthropic API Key</label>
         <input type="password" id="api-key-settings" placeholder="sk-ant-..." />
-        <small>Update your Anthropic API key here.</small>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Google Sheet ID</label>
+        <input type="text" id="sheet-id-settings" placeholder="Sheet ID" style="font-family:'DM Mono',monospace; font-size:12px;" />
       </div>
       <button class="save-btn" onclick="saveSettings()">Save Settings</button>
-      <button onclick="signOut()" style="width:100%; font-family:'DM Sans',sans-serif; font-size:13px; padding:11px; border-radius:var(--radius); border:1px solid var(--border2); background:none; color:var(--danger); cursor:pointer; margin-top:10px;">Sign out</button>
+    </div>
+
+    <div class="settings-section">
+      <button onclick="signOut()" style="width:100%; font-family:'DM Sans',sans-serif; font-size:13px; padding:11px; border-radius:var(--radius); border:1px solid var(--border2); background:none; color:var(--danger); cursor:pointer;">Sign out</button>
     </div>
   </div>
 </div>
 
 <script>
-const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
+// ═══════════════════════════════════
+// STATE
+// ═══════════════════════════════════
+const SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/drive.readonly';
 let tokenClient = null;
 let accessToken = null;
-let allFiles = []; // just metadata: {id, name, size}
-let folderId = null;
-let folderName = null;
+let indexChunks = []; // [{fileName, fileId, page, chunkIndex, totalChunks, driveLink, text}]
+let fileMap = {};     // fileName → {fileId, driveLink, pages}
 
 function getConfig() {
   return {
     clientId: localStorage.getItem('nr_client_id') || '',
-    apiKey: localStorage.getItem('nr_api_key') || '',
-    folderId: localStorage.getItem('nr_folder_id') || '',
-    folderName: localStorage.getItem('nr_folder_name') || '',
-    maxDocs: parseInt(localStorage.getItem('nr_max_docs') || '5')
+    apiKey:   localStorage.getItem('nr_api_key') || '',
+    sheetId:  localStorage.getItem('nr_sheet_id') || '',
+    topK:     parseInt(localStorage.getItem('nr_top_k') || '10')
   };
 }
 
+// ═══════════════════════════════════
+// INIT
+// ═══════════════════════════════════
 window.onload = function() {
   const cfg = getConfig();
-  if (!cfg.clientId || !cfg.apiKey) {
+  if (!cfg.clientId || !cfg.apiKey || !cfg.sheetId) {
     document.getElementById('signin-screen').style.display = 'none';
     document.getElementById('config-screen').style.display = 'block';
     return;
@@ -257,7 +302,6 @@ function loadGIS(clientId) {
       error_callback: (err) => alert('Sign in error: ' + (err.message || JSON.stringify(err)))
     });
   };
-  s.onerror = () => alert('Failed to load Google Sign-In. Check your internet connection.');
   document.head.appendChild(s);
 }
 
@@ -272,31 +316,32 @@ function onTokenResponse(resp) {
   document.getElementById('signin-screen').style.display = 'none';
   document.getElementById('main-app').style.display = 'block';
   const cfg = getConfig();
-  folderId = cfg.folderId;
-  folderName = cfg.folderName;
-  if (folderName) document.getElementById('folder-name-display').textContent = folderName;
   document.getElementById('api-key-settings').value = cfg.apiKey;
-  const maxSel = document.getElementById('max-docs-select');
-  maxSel.value = cfg.maxDocs;
-  if (folderId) loadDocumentList();
-  else document.getElementById('empty-state').style.display = 'block';
+  document.getElementById('sheet-id-settings').value = cfg.sheetId;
+  document.getElementById('top-k-select').value = cfg.topK;
+  loadIndex();
 }
 
 function signOut() {
-  accessToken = null; allFiles = [];
+  accessToken = null; indexChunks = []; fileMap = {};
   document.getElementById('main-app').style.display = 'none';
   document.getElementById('signin-screen').style.display = 'flex';
   showTab('search');
 }
 
+// ═══════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════
 function saveConfig() {
   const clientId = document.getElementById('client-id-input').value.trim();
-  const apiKey = document.getElementById('api-key-input').value.trim();
-  const errEl = document.getElementById('config-error');
-  if (!clientId || !apiKey) { errEl.textContent = 'Both fields are required.'; errEl.classList.add('visible'); return; }
+  const apiKey   = document.getElementById('api-key-input').value.trim();
+  const sheetId  = document.getElementById('sheet-id-input').value.trim();
+  const errEl    = document.getElementById('config-error');
+  if (!clientId || !apiKey || !sheetId) { errEl.textContent = 'All three fields are required.'; errEl.classList.add('visible'); return; }
   if (!apiKey.startsWith('sk-ant-')) { errEl.textContent = 'Anthropic API key should start with sk-ant-'; errEl.classList.add('visible'); return; }
   localStorage.setItem('nr_client_id', clientId);
   localStorage.setItem('nr_api_key', apiKey);
+  localStorage.setItem('nr_sheet_id', sheetId);
   errEl.classList.remove('visible');
   document.getElementById('config-screen').style.display = 'none';
   document.getElementById('signin-screen').style.display = 'flex';
@@ -304,230 +349,226 @@ function saveConfig() {
 }
 
 function saveSettings() {
-  const apiKey = document.getElementById('api-key-settings').value.trim();
-  const maxDocs = document.getElementById('max-docs-select').value;
-  if (apiKey) localStorage.setItem('nr_api_key', apiKey);
-  localStorage.setItem('nr_max_docs', maxDocs);
+  const apiKey  = document.getElementById('api-key-settings').value.trim();
+  const sheetId = document.getElementById('sheet-id-settings').value.trim();
+  const topK    = document.getElementById('top-k-select').value;
+  if (apiKey)  localStorage.setItem('nr_api_key', apiKey);
+  if (sheetId) localStorage.setItem('nr_sheet_id', sheetId);
+  localStorage.setItem('nr_top_k', topK);
   alert('Settings saved!');
 }
 
-async function pickFolder() {
-  if (!accessToken) return;
-  try {
-    const res = await fetch(
-      `https://www.googleapis.com/drive/v3/files?q=mimeType='application/vnd.google-apps.folder' and trashed=false&fields=files(id,name)&orderBy=name`,
-      { headers: { Authorization: 'Bearer ' + accessToken } }
-    );
-    const data = await res.json();
-    const folders = data.files || [];
-    if (!folders.length) { alert('No folders found in your Drive.'); return; }
-    const names = folders.map((f, i) => `${i + 1}. ${f.name}`).join('\n');
-    const choice = prompt(`Your folders:\n\n${names}\n\nEnter the number:`);
-    const idx = parseInt(choice) - 1;
-    if (isNaN(idx) || idx < 0 || idx >= folders.length) return;
-    folderId = folders[idx].id;
-    folderName = folders[idx].name;
-    localStorage.setItem('nr_folder_id', folderId);
-    localStorage.setItem('nr_folder_name', folderName);
-    document.getElementById('folder-name-display').textContent = folderName;
-    alert(`Folder "${folderName}" selected! Go to Search and tap Refresh.`);
-  } catch(e) { alert('Error: ' + e.message); }
-}
-
-// ── Load only file metadata (names + ids), no content yet ──
-async function loadDocumentList() {
-  if (!accessToken || !folderId) { alert('Please select a folder in Settings first.'); showTab('settings'); return; }
+// ═══════════════════════════════════
+// LOAD INDEX FROM GOOGLE SHEET
+// ═══════════════════════════════════
+async function loadIndex() {
+  const cfg = getConfig();
   const countEl = document.getElementById('doc-count');
-  const listEl = document.getElementById('doc-list');
-  const emptyEl = document.getElementById('empty-state');
-  const labelEl = document.getElementById('docs-label');
-  countEl.textContent = 'Loading file list…';
-  listEl.innerHTML = '';
-  emptyEl.style.display = 'none';
+  countEl.textContent = 'Loading index…';
+  document.getElementById('docs-label').style.display = 'none';
+  document.getElementById('doc-list').innerHTML = '';
+  document.getElementById('empty-state').style.display = 'none';
 
   try {
-    // Fetch ALL files with pagination
-    let allFetched = [];
-    let pageToken = null;
-    do {
-      const pageParam = pageToken ? `&pageToken=${pageToken}` : '';
-      const res = await fetch(
-        `https://www.googleapis.com/drive/v3/files?q='${folderId}' in parents and mimeType='application/pdf' and trashed=false&fields=nextPageToken,files(id,name,size)&orderBy=name&pageSize=100${pageParam}`,
-        { headers: { Authorization: 'Bearer ' + accessToken } }
-      );
-      const data = await res.json();
-      allFetched = allFetched.concat(data.files || []);
-      pageToken = data.nextPageToken || null;
-    } while (pageToken);
+    // Fetch all rows from the Notes Index sheet tab
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${cfg.sheetId}/values/Notes%20Index!A2:G?majorDimension=ROWS`;
+    const res = await fetch(url, { headers: { Authorization: 'Bearer ' + accessToken } });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'Failed to read sheet');
+    }
+    const data = await res.json();
+    const rows = data.values || [];
 
-    allFiles = allFetched;
-
-    if (!allFiles.length) {
-      countEl.textContent = 'No PDFs found in folder';
-      emptyEl.querySelector('p').textContent = 'No PDF files found in the selected folder.';
-      emptyEl.style.display = 'block';
+    if (!rows.length) {
+      countEl.textContent = 'Index is empty — run the Apps Script first';
+      document.getElementById('empty-state').style.display = 'block';
       return;
     }
 
-    countEl.textContent = `${allFiles.length} PDFs ready — ask a question to search`;
-    labelEl.style.display = 'block';
+    // Parse rows: [fileName, fileId, page, chunkIndex, totalChunks, driveLink, text]
+    indexChunks = rows.map(r => ({
+      fileName:    r[0] || '',
+      fileId:      r[1] || '',
+      page:        parseInt(r[2]) || 1,
+      chunkIndex:  parseInt(r[3]) || 1,
+      totalChunks: parseInt(r[4]) || 1,
+      driveLink:   r[5] || '',
+      text:        r[6] || ''
+    })).filter(c => c.fileName && c.text);
 
-    listEl.innerHTML = allFiles.map(f => {
-      const kb = f.size ? Math.round(parseInt(f.size) / 1024) + ' KB' : '';
-      return `<div class="doc-card">
+    // Build file map for display
+    fileMap = {};
+    indexChunks.forEach(c => {
+      if (!fileMap[c.fileName]) {
+        fileMap[c.fileName] = { fileId: c.fileId, driveLink: c.driveLink, maxPage: 0, chunks: 0 };
+      }
+      fileMap[c.fileName].chunks++;
+      fileMap[c.fileName].maxPage = Math.max(fileMap[c.fileName].maxPage, c.page);
+    });
+
+    const fileCount = Object.keys(fileMap).length;
+    countEl.textContent = `${fileCount} PDFs indexed · ${indexChunks.length} searchable chunks`;
+    document.getElementById('set-chunk-count').textContent = `${fileCount} files · ${indexChunks.length} chunks`;
+    document.getElementById('docs-label').style.display = 'flex';
+    document.getElementById('chunk-count').textContent = `${indexChunks.length} chunks`;
+
+    // Render file list
+    document.getElementById('doc-list').innerHTML = Object.entries(fileMap).map(([name, info]) =>
+      `<div class="doc-card">
         <div class="doc-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg></div>
         <div class="doc-info">
-          <div class="doc-name">${f.name}</div>
-          <div class="doc-meta">${kb}</div>
+          <div class="doc-name">${name}</div>
+          <div class="doc-meta">${info.maxPage} pages · ${info.chunks} chunks</div>
         </div>
-        <span class="doc-status ready">✓</span>
-      </div>`;
-    }).join('');
+      </div>`
+    ).join('');
 
   } catch(e) {
-    countEl.textContent = 'Error loading documents';
-    alert('Failed to load: ' + e.message);
+    countEl.textContent = 'Error loading index';
+    alert('Failed to load index: ' + e.message);
   }
 }
 
-// ── Step 1: Ask Claude which files are relevant ──
-async function selectRelevantFiles(question, fileNames, maxDocs) {
-  const cfg = getConfig();
-  const fileList = fileNames.map((n, i) => `${i+1}. ${n}`).join('\n');
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-api-key': cfg.apiKey, 'anthropic-version': '2023-06-01' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 200,
-      system: `You are a file selector. Given a list of PDF filenames and a question, return ONLY a JSON array of the numbers (1-based) of the most relevant files to answer the question. Return at most ${maxDocs} files. Example: [1,3,7]. Return ONLY the JSON array, nothing else.`,
-      messages: [{ role: 'user', content: `Files:\n${fileList}\n\nQuestion: ${question}` }]
-    })
-  });
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
-  const text = data.content.map(b => b.text || '').join('').trim();
-  const clean = text.replace(/```json|```/g, '').trim();
-  const indices = JSON.parse(clean);
-  return indices.map(i => parseInt(i) - 1).filter(i => i >= 0 && i < fileNames.length);
-}
+// ═══════════════════════════════════
+// KEYWORD SEARCH (fast, no API call)
+// Scores chunks by keyword overlap with question
+// ═══════════════════════════════════
+function scoreChunks(question, chunks, topK) {
+  const stopWords = new Set(['a','an','the','is','are','was','were','be','been','being',
+    'have','has','had','do','does','did','will','would','could','should','may','might',
+    'shall','can','need','dare','ought','used','what','which','who','whom','whose',
+    'when','where','why','how','and','or','but','if','then','so','yet','for','nor',
+    'in','on','at','to','of','by','as','with','about','into','through','during',
+    'before','after','above','below','between','i','me','my','we','our','you','your',
+    'he','she','it','they','them','their','this','that','these','those','is','it']);
 
-// ── Step 2: Fetch and read selected PDFs ──
-async function fetchPDF(fileId) {
-  let lastErr;
-  for (let attempt = 0; attempt < 2; attempt++) {
-    try {
-      const res = await fetch(
-        `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&acknowledgeAbuse=true`,
-        { headers: { Authorization: 'Bearer ' + accessToken, Accept: 'application/pdf' } }
-      );
-      if (!res.ok) {
-        const errText = await res.text();
-        // Token expired — trigger re-auth
-        if (res.status === 401) {
-          await new Promise((resolve) => {
-            tokenClient.callback = (resp) => { if (!resp.error) { accessToken = resp.access_token; } resolve(); };
-            tokenClient.requestAccessToken({ prompt: '' });
-          });
-          continue;
-        }
-        throw new Error('Drive error ' + res.status + ': ' + errText.slice(0,150));
+  const words = question.toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w.length > 2 && !stopWords.has(w));
+
+  if (!words.length) return chunks.slice(0, topK);
+
+  const scored = chunks.map(chunk => {
+    const text = chunk.text.toLowerCase();
+    let score = 0;
+    for (const word of words) {
+      // Count occurrences of each keyword
+      let idx = text.indexOf(word);
+      while (idx !== -1) {
+        score++;
+        idx = text.indexOf(word, idx + 1);
       }
-      const blob = await res.blob();
-      if (blob.size === 0) throw new Error('Empty file returned from Drive');
-      return await blobToBase64(blob);
-    } catch(e) {
-      lastErr = e;
-      await new Promise(r => setTimeout(r, 1500));
     }
-  }
-  throw lastErr;
-}
-
-function blobToBase64(blob) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(blob);
+    // Boost score if filename matches question keywords
+    const fname = chunk.fileName.toLowerCase();
+    for (const word of words) {
+      if (fname.includes(word)) score += 5;
+    }
+    return { chunk, score };
   });
+
+  return scored
+    .filter(s => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, topK)
+    .map(s => s.chunk);
 }
 
-// ── Step 3: Ask Claude with actual PDF content ──
+// ═══════════════════════════════════
+// ASK QUESTION
+// ═══════════════════════════════════
 async function askQuestion() {
   const q = document.getElementById('question-input').value.trim();
   if (!q) return;
-  if (!allFiles.length) { alert('Please load your documents first by tapping Refresh.'); return; }
+  if (!indexChunks.length) { alert('Index not loaded. Please wait or tap Refresh.'); return; }
   const cfg = getConfig();
-  if (!cfg.apiKey) { alert('No API key found. Please check Settings.'); return; }
+  if (!cfg.apiKey) { alert('No API key. Check Settings.'); return; }
 
-  const btn = document.getElementById('ask-btn');
-  const panel = document.getElementById('answer-panel');
-  const bodyEl = document.getElementById('answer-body');
-  const sourcesEl = document.getElementById('answer-sources');
-  const stepEl = document.getElementById('step-indicator');
+  const btn      = document.getElementById('ask-btn');
+  const panel    = document.getElementById('answer-panel');
+  const bodyEl   = document.getElementById('answer-body');
+  const stepEl   = document.getElementById('step-indicator');
   const stepText = document.getElementById('step-text');
+  const statsBar = document.getElementById('stats-bar');
+  const sourceSec = document.getElementById('sources-section');
+  const sourceList = document.getElementById('sources-list');
 
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>';
   panel.classList.add('visible');
   stepEl.style.display = 'flex';
   bodyEl.textContent = '';
-  sourcesEl.innerHTML = '';
+  sourceSec.style.display = 'none';
+  sourceList.innerHTML = '';
+  statsBar.classList.remove('visible');
 
   try {
-    // Step 1: select relevant files
-    stepText.textContent = `Step 1 of 3 — Scanning ${allFiles.length} filenames…`;
-    const fileNames = allFiles.map(f => f.name);
-    const maxDocs = cfg.maxDocs;
-    let selectedIndices;
-    try {
-      selectedIndices = await selectRelevantFiles(q, fileNames, maxDocs);
-    } catch(e) {
-      // fallback: just take first maxDocs files
-      selectedIndices = Array.from({length: Math.min(maxDocs, allFiles.length)}, (_, i) => i);
+    // Step 1: keyword search across chunks
+    stepText.textContent = `Step 1 of 2 — Searching ${indexChunks.length} chunks…`;
+    const topK = cfg.topK;
+    const relevant = scoreChunks(q, indexChunks, topK);
+
+    if (!relevant.length) {
+      stepEl.style.display = 'none';
+      bodyEl.textContent = 'No relevant content found for your question. Try different keywords.';
+      btn.disabled = false; btn.textContent = 'Ask';
+      return;
     }
-    if (!selectedIndices.length) selectedIndices = [0, 1, 2].slice(0, Math.min(3, allFiles.length));
 
-    const selectedFiles = selectedIndices.map(i => allFiles[i]);
+    // Step 2: send relevant chunks to Claude
+    stepText.textContent = `Step 2 of 2 — Reading ${relevant.length} relevant passages…`;
 
-    // Step 2: fetch PDFs
-    const pdfBlocks = [];
-    for (let fi = 0; fi < selectedFiles.length; fi++) {
-      const file = selectedFiles[fi];
-      stepText.textContent = `Step 2 of 3 — Downloading ${fi+1}/${selectedFiles.length}: ${file.name.slice(0,30)}…`;
-      try {
-        const b64 = await fetchPDF(file.id);
-        pdfBlocks.push({ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 }, title: file.name });
-      } catch(e) {
-        // Skip files that fail to download, continue with others
-        console.warn('Skipped', file.name, e.message);
-      }
-    }
-    if (!pdfBlocks.length) throw new Error('Could not download any of the selected PDFs. Your Google sign-in may have expired — try refreshing the page and signing in again.');
-
-    // Step 3: ask Claude
-    stepText.textContent = `Step 3 of 3 — Generating answer…`;
-    pdfBlocks.push({ type: 'text', text: `Based on the documents above, answer this question clearly and concisely. Mention which document contains the information.\n\nQuestion: ${q}` });
+    const context = relevant.map((c, i) =>
+      `[Source ${i+1}: ${c.fileName}, Page ${c.page}]\n${c.text}`
+    ).join('\n\n---\n\n');
 
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': cfg.apiKey, 'anthropic-version': '2023-06-01', 'anthropic-beta': 'pdfs-2024-09-25' },
+      headers: { 'Content-Type': 'application/json', 'x-api-key': cfg.apiKey, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: 'You are a personal assistant helping the user find information in their own private notes and documents. Be concise and specific. If the answer is not in the provided documents, say so honestly.',
-        messages: [{ role: 'user', content: pdfBlocks }]
+        max_tokens: 1024,
+        system: `You are a personal assistant helping the user find information in their own private notes and documents. 
+Answer based ONLY on the provided source passages. 
+Always cite your sources by mentioning the filename and page number, e.g. "(ADHD(1).pdf, page 3)".
+If the answer spans multiple sources, cite each one.
+If the passages don't contain enough information to answer, say so honestly.`,
+        messages: [{ role: 'user', content: `Source passages from my notes:\n\n${context}\n\nQuestion: ${q}` }]
       })
     });
+
     const data = await res.json();
     if (data.error) throw new Error(data.error.message);
     const text = data.content?.map(b => b.text || '').join('') || 'No answer found.';
 
     stepEl.style.display = 'none';
     bodyEl.textContent = text;
-    sourcesEl.innerHTML = selectedFiles.map(f =>
-      `<span class="source-tag">${f.name.replace('.pdf','').replace('.PDF','')}</span>`
+
+    // Stats bar
+    const uniqueFiles = [...new Set(relevant.map(c => c.fileName))];
+    statsBar.innerHTML = `<span class="stat">Searched <strong>${indexChunks.length}</strong> chunks</span><span class="stat">Read <strong>${relevant.length}</strong> relevant passages</span><span class="stat">From <strong>${uniqueFiles.length}</strong> file${uniqueFiles.length > 1 ? 's' : ''}</span>`;
+    statsBar.classList.add('visible');
+
+    // Source cards — deduplicated by file+page
+    const seen = new Set();
+    const uniqueSources = relevant.filter(c => {
+      const key = c.fileName + ':' + c.page;
+      if (seen.has(key)) return false;
+      seen.add(key); return true;
+    });
+
+    sourceSec.style.display = 'block';
+    sourceList.innerHTML = uniqueSources.map(c => `
+      <a class="source-card" href="${c.driveLink}" target="_blank">
+        <div class="source-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg></div>
+        <div class="source-info">
+          <div class="source-name">${c.fileName.replace(/\.pdf$/i,'')}</div>
+          <div class="source-meta">Page ${c.page} of ${fileMap[c.fileName]?.maxPage || '?'}</div>
+        </div>
+        <span class="source-arrow">↗</span>
+      </a>`
     ).join('');
 
   } catch(e) {
@@ -539,16 +580,20 @@ async function askQuestion() {
   btn.textContent = 'Ask';
 }
 
+// ═══════════════════════════════════
+// TAB NAVIGATION
+// ═══════════════════════════════════
 function showTab(tab) {
-  const searchEls = document.querySelectorAll('.search-wrap, .answer-panel, #docs-label, #doc-list, #empty-state, .header');
+  const searchEls = ['.search-wrap', '.answer-panel', '#docs-label', '#doc-list',
+                     '#empty-state', '.header', '.stats-bar'];
   const settingsEl = document.getElementById('settings-panel');
   const navItems = document.querySelectorAll('.nav-item');
   if (tab === 'search') {
-    searchEls.forEach(el => { el.style.display = ''; });
+    searchEls.forEach(sel => { const el = document.querySelector(sel); if(el) el.style.display = ''; });
     settingsEl.style.display = 'none';
     navItems[0].classList.add('active'); navItems[1].classList.remove('active');
   } else {
-    searchEls.forEach(el => { el.style.display = 'none'; });
+    searchEls.forEach(sel => { const el = document.querySelector(sel); if(el) el.style.display = 'none'; });
     settingsEl.style.display = 'block';
     navItems[0].classList.remove('active'); navItems[1].classList.add('active');
   }
