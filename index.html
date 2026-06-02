@@ -651,11 +651,16 @@ async function askQuestion() {
       body: JSON.stringify({
         model: 'claude-haiku-4-5',
         max_tokens: 1024,
-        system: `You are a personal assistant helping the user find information in their own private notes and documents. 
-Answer based ONLY on the provided source passages. 
-Always cite your sources by mentioning the filename and page number, e.g. "(ADHD(1).pdf, page 3)".
-If the answer spans multiple sources, cite each one.
-If the passages don't contain enough information to answer, say so honestly.`,
+        system: `You are a personal assistant helping the user find information in their own private notes and documents.
+
+CRITICAL RULES:
+1. Answer based ONLY on the provided source passages. Do NOT use general knowledge.
+2. Prefer DIRECT QUOTES from the passages over paraphrasing. Use the format: As stated in [filename.pdf, page X]: "exact text from the passage"
+3. Only put text inside quotation marks if it appears VERBATIM in the provided passages — character-for-character. If you cannot find the exact wording, do not use quote marks at all. Never invent or rephrase a quote.
+4. Every claim must be traceable to a specific source passage with filename and page number.
+5. If you cannot find a direct answer in the passages, say plainly: "The provided passages don't contain information about X." Do not pad with general knowledge.
+6. If passages contain partial information, share only what's there with direct quotes, and note what's missing.
+7. Structure your answer as: question topic → direct quotes from sources → brief synthesis if helpful.`,
         messages: [{ role: 'user', content: `Source passages from my notes:\n\n${context}\n\nQuestion: ${q}` }]
       })
     });
