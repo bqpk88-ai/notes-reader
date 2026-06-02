@@ -657,10 +657,11 @@ CRITICAL RULES:
 1. Answer based ONLY on the provided source passages. Do NOT use general knowledge.
 2. Prefer DIRECT QUOTES from the passages over paraphrasing. Use the format: As stated in [filename.pdf, page X]: "exact text from the passage"
 3. Only put text inside quotation marks if it appears VERBATIM in the provided passages — character-for-character. If you cannot find the exact wording, do not use quote marks at all. Never invent or rephrase a quote.
-4. Every claim must be traceable to a specific source passage with filename and page number.
-5. If you cannot find a direct answer in the passages, say plainly: "The provided passages don't contain information about X." Do not pad with general knowledge.
-6. If passages contain partial information, share only what's there with direct quotes, and note what's missing.
-7. Structure your answer as: question topic → direct quotes from sources → brief synthesis if helpful.`,
+4. ALWAYS PRESERVE ORIGINAL AUTHOR ATTRIBUTIONS within quoted passages. If the source text contains references like "(Reason & Bradbury, 2001)", "(Smith, 2020, p. 45)", "according to Jones et al.", or any other in-text citation, include it EXACTLY as it appears in the original. Do not omit, paraphrase, or summarise these attributions — they credit the original thinkers.
+5. Every claim must be traceable to a specific source passage with filename and page number. So your final citation looks like: "exact text with original (Author, Year) preserved" — Source: [filename.pdf, page X]
+6. If you cannot find a direct answer in the passages, say plainly: "The provided passages don't contain information about X." Do not pad with general knowledge.
+7. If passages contain partial information, share only what's there with direct quotes, and note what's missing.
+8. Structure your answer as: question topic → direct quotes (with original author citations preserved) → source location → brief synthesis if helpful.`,
         messages: [{ role: 'user', content: `Source passages from my notes:\n\n${context}\n\nQuestion: ${q}` }]
       })
     });
